@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http.Json;
+using VZInfoBrowser.ApplicationCore;
 using VZInfoBrowser.ApplicationCore.Model;
 
 namespace VZInfoBrowser.Infrastructure
@@ -14,7 +15,7 @@ namespace VZInfoBrowser.Infrastructure
         private readonly IHttpClientFactory _httpClientFactory = null!;
         private readonly IConfiguration _configuration = null!;
         private readonly ILogger<CurrencyRatesRequest> _logger = null!;
-        private readonly ISettings<CurrencyRatesInfo>? _settings = null;
+        private readonly ICurrentInfoRepository? _settings = null;
 
         public CurrencyRatesRequest() { }
 
@@ -22,7 +23,7 @@ namespace VZInfoBrowser.Infrastructure
             IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
             ILogger<CurrencyRatesRequest> logger,
-            ISettings<CurrencyRatesInfo> settings) =>
+            ICurrentInfoRepository settings) =>
             (_httpClientFactory, _configuration, _logger, _settings) =
                 (httpClientFactory, configuration, logger, settings);
 
@@ -32,7 +33,7 @@ namespace VZInfoBrowser.Infrastructure
             if (t == null || t.Result == null)
                 return;
 
-            _settings?.SaveSettings(t.Result);
+            _settings?.Save(t.Result);
         }
 
         async Task<CurrencyRatesInfo?> GetCurrencyRatesAsync()
@@ -59,7 +60,7 @@ namespace VZInfoBrowser.Infrastructure
             return null;
         }
 
-        public async Task<CurrencyRatesInfo> TryParseResponse(HttpResponseMessage res)
+        public static async Task<CurrencyRatesInfo> TryParseResponse(HttpResponseMessage res)
         {
             if (res.StatusCode == HttpStatusCode.NoContent)
             {
@@ -82,9 +83,9 @@ namespace VZInfoBrowser.Infrastructure
 
         private bool CheckNeedsToAsk()
         {
-            if (_settings?.Data == null || _settings.Data.Timestamp == 0)
+            if (_settings?.CurrentInfo == null || _settings.CurrentInfo.Timestamp == 0)
                 return true;
-            long diff = Math.Abs(_settings.Data.Timestamp - ConvertToTimestamp(DateTime.Now));
+            long diff = Math.Abs(_settings.CurrentInfo.Timestamp - ConvertToTimestamp(DateTime.Now));
             return diff > RealTimerPeriodValue; // if previous timestamp is some hours older than timenow
         }
 
