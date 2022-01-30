@@ -8,6 +8,7 @@ using Polly.Extensions.Http;
 using StackExchange.Redis;
 using System;
 using System.Net.Http;
+using VZInfoBrowser.ApplicationCore;
 using VZInfoBrowser.ApplicationCore.Model;
 using VZInfoBrowser.Infrastructure;
 using VZInfoBrowser.Requests;
@@ -44,7 +45,10 @@ namespace VZInfoBrowser
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5)) 
                     .AddPolicyHandler(GetRetryPolicy());
 
-            services.AddSingleton<ISettings<CurrencyRatesInfo>, SettingsManager<CurrencyRatesInfo>>();
+            //services.AddSingleton<ICurrentInfoProvider, CurrentInfoProvider>();
+            // hide it below
+            services.AddSingleton<ICurrentInfoProvider, CurrentInfoRepository>();
+            services.AddSingleton<ICurrentInfoRepository, CurrentInfoRepository>();
             services.AddSingleton<ICurrencyRatesRequest, CurrencyRatesRequest>();
             services.AddHostedService<TimedHostedService>();
 

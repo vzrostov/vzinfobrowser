@@ -1,23 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using VZInfoBrowser.ApplicationCore.Model;
-using VZInfoBrowser.Infrastructure;
+using VZInfoBrowser.ApplicationCore;
 using VZInfoBrowser.Models;
 
 namespace VZInfoBrowser.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ISettings<CurrencyRatesInfo> _data;
+        private readonly ICurrentInfoProvider _data;
 
-        public HomeController(ISettings<CurrencyRatesInfo> data) 
+        public HomeController(ICurrentInfoProvider data) 
         {
             _data = data;
         }
 
         public IActionResult Index()
         {
-            return View(_data.Data);
+            return View(_data.CurrentInfo);
         }
 
         public IActionResult About()

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Configuration;
+using VZInfoBrowser.ApplicationCore;
 using VZInfoBrowser.ApplicationCore.Model;
 using VZInfoBrowser.Infrastructure;
 using VZInfoBrowser.Requests;
@@ -10,13 +11,13 @@ namespace VZInfoBrowser.HtmlHelpers
 {
     public class CurrentRatesTagHelper : TagHelper
     {
-        readonly ISettings<CurrencyRatesInfo> _data;
-        public CurrentRatesTagHelper(ISettings<CurrencyRatesInfo> data) => (_data) = (data);
+        readonly ICurrentInfoProvider _data;
+        public CurrentRatesTagHelper(ICurrentInfoProvider data) => (_data) = (data);
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             string listContent = "<h3> Параметры </h3>";
-            foreach (var item in  _data.Data?.Rates)
+            foreach (var item in  _data.CurrentInfo?.Rates)
                 listContent += "<li>" + item.Key + " : " + item.Value + "</li>";
             output.Content.SetHtmlContent(listContent);
         }

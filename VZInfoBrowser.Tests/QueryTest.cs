@@ -4,6 +4,7 @@ using Moq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using VZInfoBrowser.ApplicationCore;
 using VZInfoBrowser.ApplicationCore.Model;
 using VZInfoBrowser.Infrastructure;
 using Xunit;
@@ -24,7 +25,7 @@ namespace VZInfoBrowser.Tests
         public QueryTest()
         {
             currencyRatesRequest = new CurrencyRatesRequest(_mock_httpClientFactory.Object, _mock_configuration.Object, _mock_logger.Object, null);
-            res = currencyRatesRequest.TryParseResponse(new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(responseStr) });
+            res = CurrencyRatesRequest.TryParseResponse(new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(responseStr) });
         }
 
         [Fact]
@@ -45,7 +46,7 @@ namespace VZInfoBrowser.Tests
         public void QueryTestForBadResult()
         {
             Task<CurrencyRatesInfo> tn = null;
-            tn = currencyRatesRequest.TryParseResponse(new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(responseStr[1..^1]) });
+            tn = CurrencyRatesRequest.TryParseResponse(new HttpResponseMessage() { StatusCode = HttpStatusCode.OK, Content = new StringContent(responseStr[1..^1]) });
             Assert.NotNull(tn);
             Assert.True(tn.Exception != null);
         }
@@ -57,9 +58,9 @@ namespace VZInfoBrowser.Tests
             CurrencyRatesInfo.Base = "UAE";
             CurrencyRatesInfo.Timestamp = 8989;
             CurrencyRatesInfo.Rates.Add("RUB", 3.4);
-            ISettings<CurrencyRatesInfo> settings = new SettingsManager<CurrencyRatesInfo>("test");
-            settings.SaveSettings(CurrencyRatesInfo);
-            var newCurr = settings.LoadSettings();
+            ICurrentInfoRepository settings = new CurrentInfoRepository("test");
+            settings.Save(CurrencyRatesInfo);
+            var newCurr = settings.CurrentInfo;
             Assert.Equal(CurrencyRatesInfo.Base, newCurr.Base);
             Assert.Equal(CurrencyRatesInfo.Timestamp, newCurr.Timestamp);
             Assert.Single(CurrencyRatesInfo.Rates);
