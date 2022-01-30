@@ -1,0 +1,31 @@
+﻿@using VZInfoBrowser.ApplicationCore.Model
+@using VZInfoBrowser.HtmlHelpers
+
+@model CurrencyRatesInfo
+@{
+    ViewData["Title"] = "VZInfoBrowser";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to Vadim Zolotilov exchange rates browser</h1>
+
+    <hr/>
+    <h2>@GetModeString()</h2>
+    <hr/>
+
+    <link rel="stylesheet" href="~/css/table.css" />
+	<div class="ttable">
+		@Html.Table(@Model)
+	</div>
+</div>
+
+@functions
+{
+    public string GetModeString()
+    {
+        if (@Model == null)
+            return "No";
+        return $"Exchange rate for {@Model.Base} on {@Model.TimestampAsString}";
+    }
+}
