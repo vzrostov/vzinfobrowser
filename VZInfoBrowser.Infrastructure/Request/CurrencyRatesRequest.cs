@@ -17,6 +17,8 @@ namespace VZInfoBrowser.Infrastructure
         private readonly ILogger<CurrencyRatesRequest> _logger = null!;
         private readonly ICurrentInfoRepository? _settings = null;
 
+        public event WorkOut OnWorkOut;
+
         public CurrencyRatesRequest() { }
 
         public CurrencyRatesRequest(
@@ -32,8 +34,7 @@ namespace VZInfoBrowser.Infrastructure
             var t = GetCurrencyRatesAsync();
             if (t == null || t.Result == null)
                 return;
-
-            _settings?.Save(t.Result);
+            OnWorkOut(t.Result);
         }
 
         async Task<CurrencyRatesInfo?> GetCurrencyRatesAsync()
@@ -83,9 +84,10 @@ namespace VZInfoBrowser.Infrastructure
 
         private bool CheckNeedsToAsk()
         {
-            if (_settings?.CurrentInfo == null || _settings.CurrentInfo.Timestamp == 0)
+            var l = _settings?.Load();
+            if (l == null || l.Timestamp == 0)
                 return true;
-            long diff = Math.Abs(_settings.CurrentInfo.Timestamp - ConvertToTimestamp(DateTime.Now));
+            long diff = Math.Abs(l.Timestamp - ConvertToTimestamp(DateTime.Now));
             return diff > RealTimerPeriodValue; // if previous timestamp is some hours older than timenow
         }
 

@@ -60,7 +60,7 @@ namespace VZInfoBrowser.Tests
             CurrencyRatesInfo.Rates.Add("RUB", 3.4);
             ICurrentInfoRepository settings = new CurrentInfoRepository("test");
             settings.Save(CurrencyRatesInfo);
-            var newCurr = settings.CurrentInfo;
+            var newCurr = settings.Load();
             Assert.Equal(CurrencyRatesInfo.Base, newCurr.Base);
             Assert.Equal(CurrencyRatesInfo.Timestamp, newCurr.Timestamp);
             Assert.Single(CurrencyRatesInfo.Rates);

@@ -12,7 +12,7 @@ namespace VZInfoBrowser.ApplicationCore
     /// </summary>
     public interface ICurrentInfoRepository
     {
-        CurrencyRatesInfo CurrentInfo { get; }
-        bool Save(CurrencyRatesInfo info);
+        CurrencyRatesInfo? Load();
+        bool Save(CurrencyRatesInfo? info);
     }
 }
