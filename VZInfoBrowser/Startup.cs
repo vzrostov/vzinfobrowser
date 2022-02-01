@@ -37,7 +37,7 @@ namespace VZInfoBrowser
             Configuration.GetSection($"{redisOptions.Title}").Bind(redisOptions);
 
             // prepare timers, services for info getting  
-            services.AddHttpClient(exchangeRatesServiceOptions.Title, 
+            services.AddHttpClient(exchangeRatesServiceOptions.Name, 
                 c => c.BaseAddress =
                     new Uri($"{exchangeRatesServiceOptions.Host}" +
                     (string.IsNullOrEmpty(exchangeRatesServiceOptions.Port)? "" : $":{exchangeRatesServiceOptions.Port}") 
@@ -45,12 +45,13 @@ namespace VZInfoBrowser
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5)) 
                     .AddPolicyHandler(GetRetryPolicy());
 
-            //services.AddSingleton<ICurrentInfoProvider, CurrentInfoProvider>();
             // hide it below
-            services.AddSingleton<ICurrentInfoProvider, CurrentInfoRepository>();
+            //services.AddSingleton<ICurrentInfoProvider, CurrentInfoRepository>();
             services.AddSingleton<ICurrentInfoRepository, CurrentInfoRepository>();
             services.AddSingleton<ICurrencyRatesRequest, CurrencyRatesRequest>();
             services.AddHostedService<TimedHostedService>();
+            // new ones
+            services.AddSingleton<ICurrentInfoProvider, CurrentInfoProvider>();
 
             // prepare timers, services for info saving  
             //var multiplexer = ConnectionMultiplexer.Connect($"{redisOptions.Host}" +

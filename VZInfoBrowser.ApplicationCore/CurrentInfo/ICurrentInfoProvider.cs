@@ -7,6 +7,6 @@ namespace VZInfoBrowser.ApplicationCore
     /// </summary>
     public interface ICurrentInfoProvider
     {
-        CurrencyRatesInfo CurrentInfo { get; }
+        CurrencyRatesInfo? CurrentInfo { get; }
     }
 }

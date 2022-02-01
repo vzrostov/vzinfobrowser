@@ -5,7 +5,7 @@ using VZInfoBrowser.ApplicationCore.Model;
 namespace VZInfoBrowser.Infrastructure
 {
 
-    public class CurrentInfoRepository : ICurrentInfoRepository, ICurrentInfoProvider
+    public class CurrentInfoRepository : ICurrentInfoRepository
     {
         public CurrentInfoRepository() : this("vzinfobrowser.json")
         {
@@ -18,37 +18,23 @@ namespace VZInfoBrowser.Infrastructure
 
         private readonly string filePath;
 
-        private CurrencyRatesInfo? data;
-        public CurrencyRatesInfo? CurrentInfo
-        {
-            get
-            {
-                if (data == null)
-                {
-                    data = LoadSettings();
-                    return data;
-                }
-                return data;
-            }
-            set { data = value; }
-        }
-
-        public CurrencyRatesInfo? LoadSettings() =>
+        public CurrencyRatesInfo? Load() =>
             File.Exists(filePath) ?
             JsonConvert.DeserializeObject<CurrencyRatesInfo>(File.ReadAllText(filePath)) :
             null;
 
-        public bool Save(CurrencyRatesInfo info)
+        public bool Save(CurrencyRatesInfo? info)
         {
-            CurrentInfo = info;
+            if (info == null)
+                return false;
             try
             {
                 // TODO проверка что записываемое по времени > имеющегося 
                 string json = JsonConvert.SerializeObject(info,
-                            new JsonSerializerSettings()
-                            {
-                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                            });
+                    new JsonSerializerSettings()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    });
                 File.WriteAllText(filePath, json);
 
             }
