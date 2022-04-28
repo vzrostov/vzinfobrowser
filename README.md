@@ -2,4 +2,4 @@
 
 Currency exchange rates.
 
-![Currency exchange rates](VZInfoBrowser/wwwroot/VZInfoBrowser.mp4)
+![Currency exchange rates](VZInfoBrowser/wwwroot/VZInfoBrowser.gif)
